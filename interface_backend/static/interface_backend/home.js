@@ -27,10 +27,36 @@ submitForm.addEventListener('submit', function(e) {
         url: url,
         data: fd,
         success: function(response){
-            console.log("everything went well, here is the response status: ", response.status)
+            console.log(response)
             answerContainer.classList.remove("not-visible")
             currentFaq = response.faqId
-            // loadAnswer()
+            document.getElementById("generatedText").innerHTML = `
+                <p>${response.answer}</p>
+            `
+            document.getElementById("q1").innerText = `
+                ${response.q1}
+            `
+            document.getElementById("a1").innerText = `
+                ${response.a1}
+            `
+            document.getElementById("q2").innerText = `
+                ${response.q2}
+            `
+            document.getElementById("a2").innerText = `
+                ${response.a2}
+            `
+            document.getElementById("q3").innerText = `
+                ${response.q3}
+            `
+            document.getElementById("a3").innerText = `
+                ${response.a3}
+            `
+            document.getElementById("q4").innerText = `
+                ${response.q4}
+            `
+            document.getElementById("a4").innerText = `
+                ${response.a4}
+            `
             document.getElementById("submit-form-button").classList.add("not-visible")
             document.getElementById("like-button").classList.remove("not-visible")
             document.getElementById("dislike-button").classList.remove("not-visible")
