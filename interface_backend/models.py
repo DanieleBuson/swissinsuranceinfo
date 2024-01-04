@@ -8,3 +8,10 @@ class Faq(models.Model):
 
     def __str__(self) -> str:
         return self.question
+    
+class TestConnection(models.Model):
+    name=models.CharField(max_length=10)
+    image = models.ImageField(blank=False)
+
+    def __str__(self) -> str:
+        return self.name
