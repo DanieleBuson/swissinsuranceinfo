@@ -1,18 +1,17 @@
 import pandas as pd
 import re
-import openai
+from openai import OpenAI
 import environ
 
 env = environ.Env()
 environ.Env.read_env()
 
-openai.api_key = env('OPENAI_SECRET_KEY')
-
+client = OpenAI(api_key=env('OPENAI_SECRET_KEY'))
 
 
 def summarize_text(question, text):
 
-    string = f"""Based on the following information, please provide a concise answer in the form of an FAQ response, limited to 180 tokens. Do not include additional or circumstantial text. 
+    question = f"""Based on the following information, please provide a concise answer in the form of an FAQ response, limited to 180 tokens. Do not include additional or circumstantial text. Do not use the name of a specific company if not required by the question.
 
             Question: {question}
 
@@ -22,12 +21,18 @@ def summarize_text(question, text):
 
     # This function takes a string and returns a summary using OpenAI's GPT model.
     try:
-        response = openai.Completion.create(
-          engine="text-davinci-003",  # You may choose a different model as needed
-          prompt=string,
-          max_tokens=180  # Adjust as needed
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": question},
+            ],
+            max_tokens=180,
+            n=1,
+            stop=None,
+            temperature=0.7
         )
-        return response.choices[0].text.strip()
+        return response.choices[0].message.content.strip()
+
     except Exception as e:
         print("Error during OpenAI API call:", e)
         return ""
@@ -50,7 +55,8 @@ def cleaning_text(question):
 
 def give_an_answer(question, file_path):
 
-    cleaned_question = cleaning_text(question)
+    # cleaned_question = cleaning_text(question)
+    cleaned_question = question
     dict_csv = read_and_concat_csv(file_path)
     answer = summarize_text(cleaned_question, dict_csv['cleaned_text'])
     cleaned_answer = cleaning_text(answer)
